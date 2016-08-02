@@ -1,0 +1,32 @@
+<h1>Lista de Tareas</h1>
+
+<table>
+    <tr>
+        <th>Descripcion</th>
+        <th>Terminada?</th>
+        <th></th>
+        <th></th>
+    </tr>
+    {% for t in task_list %}
+    <tr>
+        <td>{{ t.description }}</td>
+        <td>
+            {% if t.is_finished %}
+                Terminada
+            {% else %}
+                Pendiente
+            {% endif %}
+        </td>
+        <td>
+            <form>
+                <input type="submit" value="Editar"/>
+            </form>
+        </td>
+        <td>
+            <form>
+                <input type="submit" value="Borrar"/>
+            </form>
+        </td>
+    </tr>
+    {% endfor %}
+</table>

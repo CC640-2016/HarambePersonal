@@ -59,3 +59,19 @@ class CreateTaskTest(TestCase):
         self.assertEquals(2, len(Task.objects.all()))
         self.assertEquals('jugar lol', Task.objects.all()[0].description)
         self.assertEquals(False, Task.objects.all()[1].is_finished)
+        
+
+class list_tasks_view_tests(TestCase):
+    
+    def setUp(self):
+        setup_test_environment()
+        # create an instance of the client for our use
+        self.client = Client()
+        response = self.client.post(reverse('app1:save_task'), {'description': 'jugar lol'})
+        response2 = self.client.post(reverse('app1:save_task'), {'description':'comer'})
+    
+    def test_view(self):
+        response = self.client.get(reverse('app1:task_list'))
+        response.status_code = 200
+        self.assertContains(response, 'Lista de Tareas')
+        self.assertContains(response, 'comer')

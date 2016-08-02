@@ -18,3 +18,8 @@ def save_task(request):
         pass
         
     return render(request, 'create_task_view.html', {})
+    
+def list_tasks(request):
+    tasks = Task.objects.all()
+    context = {'task_list' : tasks}
+    return render(request, 'task_list.html', context)
