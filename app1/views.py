@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from django.http import HttpResponse
 from .models import Task
 
 # Create your views here.
@@ -8,7 +9,8 @@ def create_task(request):
 
 def save_task(request):
     description = request.POST.get('description')
-    if description != '':
+    tasks_same_name = Task.objects.filter(description=description)
+    if description != '' and len(tasks_same_name) == 0:
         task = Task(description=description)
         task.save()
     else:
