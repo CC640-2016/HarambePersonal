@@ -28,3 +28,22 @@ class TaskModelTest(TestCase):
         self.assertEquals(only_task_in_database.description, "Ir al supermercado.")
         self.assertFalse(only_task_in_database.is_finished)
         
+from django.test.utils import setup_test_environment
+from django.test import Client        
+from django.core.urlresolvers import reverse
+
+class view_tests(TestCase):
+    client = None
+    
+    def setUp(self):
+        setup_test_environment()
+        # create an instance of the client for our use
+        self.client = Client()
+    
+    def test_view(self):
+        response = self.client.get('/')
+        self.assertEquals(response.status_code, 404)
+        response = self.client.get(reverse('app1:create_task'))
+        response.status_code = 200
+        self.assertTrue('submit' in response.content)
+        self.assertContains(response, 'submit')
