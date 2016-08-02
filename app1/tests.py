@@ -1,7 +1,9 @@
-from django.test import TestCase
+from django.test import TestCase, Client, RequestFactory
 from django.test import LiveServerTestCase
-from selenium import webdriver
 from .models import Task
+from django.test.utils import setup_test_environment
+from django.core.urlresolvers import reverse
+
 
 class TaskModelTest(TestCase):
     
@@ -28,9 +30,6 @@ class TaskModelTest(TestCase):
         self.assertEquals(only_task_in_database.description, "Ir al supermercado.")
         self.assertFalse(only_task_in_database.is_finished)
         
-from django.test.utils import setup_test_environment
-from django.test import Client        
-from django.core.urlresolvers import reverse
 
 class view_tests(TestCase):
     client = None
@@ -47,3 +46,16 @@ class view_tests(TestCase):
         response.status_code = 200
         self.assertTrue('submit' in response.content)
         self.assertContains(response, 'submit')
+        
+class CreateTaskTest(TestCase):
+
+    def setUp(self):
+        self.factory = RequestFactory()
+        self.c =  Client()
+        
+    def test_task_post(self):
+        response = self.c.post(reverse('app1:save_task'), {'description': 'jugar lol'})
+        response2 = self.c.post(reverse('app1:save_task'), {'description':'comer'})
+        self.assertEquals(2, len(Task.objects.all()))
+        self.assertEquals('jugar lol', Task.objects.all()[0].description)
+        self.assertEquals(False, Task.objects.all()[1].is_finished)
