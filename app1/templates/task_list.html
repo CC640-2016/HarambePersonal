@@ -23,9 +23,7 @@
             </form>
         </td>
         <td>
-            <form>
-                <input type="submit" value="Borrar"/>
-            </form>
+            <a href="{% url 'app1:delete_task' t.id %}">Borrar</a>
         </td>
     </tr>
     {% endfor %}

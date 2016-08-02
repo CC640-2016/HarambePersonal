@@ -23,3 +23,10 @@ def list_tasks(request):
     tasks = Task.objects.all()
     context = {'task_list' : tasks}
     return render(request, 'task_list.html', context)
+
+    
+def delete_task(request, task_id=None):
+    tasks = Task.objects.all()
+    context = {'task_list' : tasks}
+    delete = Task.objects.get(pk=task_id).delete()
+    return render(request, 'task_list.html', context)

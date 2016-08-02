@@ -75,3 +75,17 @@ class list_tasks_view_tests(TestCase):
         response.status_code = 200
         self.assertContains(response, 'Lista de Tareas')
         self.assertContains(response, 'comer')
+        
+class delete_task_tests(TestCase):
+    def setUp(self):
+        setup_test_environment()
+        # create an instance of the client for our use
+        self.client = Client()
+        self.client.post(reverse('app1:save_task'), {'description': 'jugar lol'})
+        self.client.post(reverse('app1:save_task'), {'description':'comer'})
+        
+    def test_delete(self):
+        self.client.post(reverse('app1:delete_task', args=(1,)))
+        self.assertEquals(1, len(Task.objects.all()))
+        response = self.client.get(reverse('app1:task_list'))
+        self.assertContains(response, 'comer')
