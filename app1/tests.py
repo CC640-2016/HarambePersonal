@@ -59,3 +59,53 @@ class CreateTaskTest(TestCase):
         self.assertEquals(2, len(Task.objects.all()))
         self.assertEquals('jugar lol', Task.objects.all()[0].description)
         self.assertEquals(False, Task.objects.all()[1].is_finished)
+        
+
+class list_tasks_view_tests(TestCase):
+    
+    def setUp(self):
+        setup_test_environment()
+        # create an instance of the client for our use
+        self.client = Client()
+        response = self.client.post(reverse('app1:save_task'), {'description': 'jugar lol'})
+        response2 = self.client.post(reverse('app1:save_task'), {'description':'comer'})
+    
+    def test_view(self):
+        response = self.client.get(reverse('app1:task_list'))
+        response.status_code = 200
+        self.assertContains(response, 'Lista de Tareas')
+        self.assertContains(response, 'comer')
+        
+class delete_task_tests(TestCase):
+    def setUp(self):
+        setup_test_environment()
+        # create an instance of the client for our use
+        self.client = Client()
+        self.client.post(reverse('app1:save_task'), {'description': 'jugar lol'})
+        self.client.post(reverse('app1:save_task'), {'description':'comer'})
+        
+    def test_delete(self):
+        self.client.post(reverse('app1:delete_task', args=(1,)))
+        self.assertEquals(1, len(Task.objects.all()))
+        response = self.client.get(reverse('app1:task_list'))
+        self.assertContains(response, 'comer')
+        
+
+class EditTask(TestCase):
+    
+    def setUp(self):
+        setup_test_environment()
+        self.client = Client()
+        response = self.client.post(reverse('app1:save_task'), {'description': 'jugar lol'})
+        response2 = self.client.post(reverse('app1:save_task'), {'description':'comer'})
+        
+    def test_view(self):
+        response = self.client.get(reverse('app1:edit_task_view', args=(1,)))
+        response.status_code = 200
+        self.assertContains(response, 'jugar lol')
+        self.assertContains(response, 'submit')
+        
+    def test_edit_task(self):
+        response = self.client.post(reverse('app1:edit_task', args=(1,)), {'description': 'beber'})
+        self.assertEquals(2, len(Task.objects.all()))
+        self.assertEquals('beber', Task.objects.all().filter(id=1)[0].description)

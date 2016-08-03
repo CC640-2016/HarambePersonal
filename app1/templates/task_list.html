@@ -1,0 +1,28 @@
+<h1>Lista de Tareas</h1>
+
+<table>
+    <tr>
+        <th>Descripcion</th>
+        <th>Terminada?</th>
+        <th></th>
+        <th></th>
+    </tr>
+    {% for t in task_list %}
+    <tr>
+        <td>{{ t.description }}</td>
+        <td>
+            {% if t.is_finished %}
+                Terminada
+            {% else %}
+                Pendiente
+            {% endif %}
+        </td>
+        <td>
+            <a href="{% url 'app1:edit_task_view' t.id %}">Editar tarea</a>
+        </td>
+        <td>
+            <a href="{% url 'app1:delete_task' t.id %}">Borrar</a>
+        </td>
+    </tr>
+    {% endfor %}
+</table>
