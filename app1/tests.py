@@ -89,3 +89,23 @@ class delete_task_tests(TestCase):
         self.assertEquals(1, len(Task.objects.all()))
         response = self.client.get(reverse('app1:task_list'))
         self.assertContains(response, 'comer')
+        
+
+class EditTask(TestCase):
+    
+    def setUp(self):
+        setup_test_environment()
+        self.client = Client()
+        response = self.client.post(reverse('app1:save_task'), {'description': 'jugar lol'})
+        response2 = self.client.post(reverse('app1:save_task'), {'description':'comer'})
+        
+    def test_view(self):
+        response = self.client.get(reverse('app1:edit_task_view', args=(1,)))
+        response.status_code = 200
+        self.assertContains(response, 'jugar lol')
+        self.assertContains(response, 'submit')
+        
+    def test_edit_task(self):
+        response = self.client.post(reverse('app1:edit_task', args=(1,)), {'description': 'beber'})
+        self.assertEquals(2, len(Task.objects.all()))
+        self.assertEquals('beber', Task.objects.all().filter(id=1)[0].description)

@@ -18,9 +18,7 @@
             {% endif %}
         </td>
         <td>
-            <form>
-                <input type="submit" value="Editar"/>
-            </form>
+            <a href="{% url 'app1:edit_task_view' t.id %}">Editar tarea</a>
         </td>
         <td>
             <a href="{% url 'app1:delete_task' t.id %}">Borrar</a>

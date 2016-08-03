@@ -30,3 +30,17 @@ def delete_task(request, task_id=None):
     context = {'task_list' : tasks}
     delete = Task.objects.get(pk=task_id).delete()
     return render(request, 'task_list.html', context)
+    
+def task_edition(request, task_id=None):
+    task = Task.objects.all().filter(id=task_id)[0]
+    context = {'task' : task}
+    return render(request, 'edit_task.html', context)
+    
+def edit_task(request, task_id=None):
+    description = request.POST.get('description')
+    task = Task.objects.all().filter(id=str(task_id))[0]
+    task.description = description
+    task.save()
+    tasks = Task.objects.all()
+    context = {'task_list' : tasks}
+    return render(request, 'task_list.html', context)
