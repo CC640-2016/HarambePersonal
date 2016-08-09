@@ -129,3 +129,23 @@ class FinishTask(TestCase):
         self.assertEquals('jugar lol', Task.objects.all().filter(id=1)[0].description)
         self.assertEquals(True, Task.objects.all().filter(id=1)[0].is_finished)
         
+class FinishTask(TestCase):
+    
+    def setUp(self):
+        setup_test_environment()
+        self.client = Client()
+        response = self.client.post(reverse('app1:save_task'), {'description': 'jugar lol'})
+        
+    def test_view(self):
+        response = self.client.get(reverse('app1:task_list'))
+        response.status_code = 200
+        self.assertContains(response, 'jugar lol')
+        self.assertContains(response, 'Terminar')
+        
+    def test_finish_task(self):
+        self.assertEquals(False, Task.objects.all().filter(id=1)[0].is_finished)
+        self.assertEquals('jugar lol', Task.objects.all().filter(id=1)[0].description)
+        response = self.client.post(reverse('app1:finish_task', args=(1,))) # arg 1 es el id del post a ponerle que termino
+        self.assertEquals(1, len(Task.objects.all()))
+        self.assertEquals('jugar lol', Task.objects.all().filter(id=1)[0].description)
+        self.assertEquals(True, Task.objects.all().filter(id=1)[0].is_finished)
