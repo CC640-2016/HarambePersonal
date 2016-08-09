@@ -1,5 +1,6 @@
 from django.shortcuts import render
-from django.http import HttpResponse
+from django.http import HttpResponseRedirect
+from django.core.urlresolvers import reverse
 from .models import Task
 
 # Create your views here.
@@ -41,6 +42,10 @@ def edit_task(request, task_id=None):
     task = Task.objects.all().filter(id=str(task_id))[0]
     task.description = description
     task.save()
-    tasks = Task.objects.all()
-    context = {'task_list' : tasks}
-    return render(request, 'task_list.html', context)
+    return HttpResponseRedirect(reverse('app1:task_list'))
+    
+def finish_task(request, task_id=None):
+    task = Task.objects.all().filter(id=str(task_id))[0]
+    task.is_finished = True
+    task.save()
+    return HttpResponseRedirect(reverse('app1:task_list'))
