@@ -6,6 +6,7 @@
         <th>Terminada?</th>
         <th></th>
         <th></th>
+        <th></th>
     </tr>
     {% for t in task_list %}
     <tr>
@@ -23,6 +24,14 @@
         <td>
             <a href="{% url 'app1:delete_task' t.id %}">Borrar</a>
         </td>
+        <td>
+            <a href="{% url 'app1:finish_task' t.id %}">Terminar</a>
+        </td>
     </tr>
     {% endfor %}
+    
+    
 </table>
+
+</br>
+<a href="{% url 'app1:create_task' %}">Crear nueva tarea</a>
