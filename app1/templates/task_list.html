@@ -51,9 +51,12 @@
                 <td>
                     <a href="{% url 'app1:delete_task' t.id %}">Borrar</a>
                 </td>
-                <td>
-                    <a href="{% url 'app1:finish_task' t.id %}">Terminar</a>
-                </td>
+                
+                {% if not t.is_finished %}
+                    <td>
+                        <a href="{% url 'app1:finish_task' t.id %}">Terminar</a>
+                    </td>
+                {% endif %}
             </tr>
         {% endif %}
     {% endfor %}
