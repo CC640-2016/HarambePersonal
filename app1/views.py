@@ -20,11 +20,16 @@ def save_task(request):
         
     return render(request, 'create_task_view.html', {})
     
-def list_tasks(request):
+def list_tasks(request, filtering=None):
     tasks = Task.objects.all()
-    context = {'task_list' : tasks}
+    if filtering is True:
+        context = {'task_list' : tasks, 'filtering' : True}
+    else: 
+        context = {'task_list' : tasks}
     return render(request, 'task_list.html', context)
-
+    
+def list_tasks_finished(request):
+    return list_tasks(request, True);
     
 def delete_task(request, task_id=None):
     tasks = Task.objects.all()

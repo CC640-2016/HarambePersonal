@@ -1,4 +1,12 @@
-<h1>Lista de Tareas</h1>
+{% if filtering %}
+    <h1>Lista de Tareas Terminadas</h1>
+    
+    <a href="{% url 'app1:task_list' %}">Dejar de filtrar Terminadas</a>
+{% else %}
+    <h1>Lista de Tareas</h1>
+    
+    <a href="{% url 'app1:task_list_finished' %}">Filtrar Terminadas</a>
+{% endif %}
 
 <table>
     <tr>
@@ -9,25 +17,48 @@
         <th></th>
     </tr>
     {% for t in task_list %}
-    <tr>
-        <td>{{ t.description }}</td>
-        <td>
-            {% if t.is_finished %}
-                Terminada
-            {% else %}
-                Pendiente
-            {% endif %}
-        </td>
-        <td>
-            <a href="{% url 'app1:edit_task_view' t.id %}">Editar tarea</a>
-        </td>
-        <td>
-            <a href="{% url 'app1:delete_task' t.id %}">Borrar</a>
-        </td>
-        <td>
-            <a href="{% url 'app1:finish_task' t.id %}">Terminar</a>
-        </td>
-    </tr>
+        {% if filtering %}
+            {% if not t.is_finished %}
+                <tr>
+                    <td>{{ t.description }}</td>
+                    <td>
+                            Pendiente
+                    </td>
+                    <td>
+                        <a href="{% url 'app1:edit_task_view' t.id %}">Editar tarea</a>
+                    </td>
+                    <td>
+                        <a href="{% url 'app1:delete_task' t.id %}">Borrar</a>
+                    </td>
+                    <td>
+                        <a href="{% url 'app1:finish_task' t.id %}">Terminar</a>
+                    </td>
+                </tr>
+            {% endif %}    
+        {% else %}
+            <tr>
+                <td>{{ t.description }}</td>
+                <td>
+                    {% if t.is_finished %}
+                        Terminada
+                    {% else %}
+                        Pendiente
+                    {% endif %}
+                </td>
+                <td>
+                    <a href="{% url 'app1:edit_task_view' t.id %}">Editar tarea</a>
+                </td>
+                <td>
+                    <a href="{% url 'app1:delete_task' t.id %}">Borrar</a>
+                </td>
+                
+                {% if not t.is_finished %}
+                    <td>
+                        <a href="{% url 'app1:finish_task' t.id %}">Terminar</a>
+                    </td>
+                {% endif %}
+            </tr>
+        {% endif %}
     {% endfor %}
     
     
