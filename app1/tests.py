@@ -144,3 +144,108 @@ class ListNonFinishedTasksView(TestCase):
         response.status_code = 200
         self.assertNotContains(response, 'jugar lol')
         self.assertContains(response, 'jugar dota')
+        
+
+class CheckPrioritiesAddTasks(TestCase):
+    
+    def setUp(self):
+        setup_test_environment()
+        # create an instance of the client for our use
+        self.client = Client()
+        response = self.client.post(reverse('app1:save_task'), {'description': 'jugar lol'})
+        response2 = self.client.post(reverse('app1:save_task'), {'description':'comer'})
+        
+    def test_check_priorities(self):
+        task1 = Task.objects.get(description='jugar lol')
+        task2 = Task.objects.get(description='comer')
+        self.assertEquals(1, task1.priority)
+        self.assertEquals(2, task2.priority)
+      
+      
+class CheckPrioritiesDeleteTask(TestCase):
+    
+    def setUp(self):
+        setup_test_environment()
+        # create an instance of the client for our use
+        self.client = Client()
+        response = self.client.post(reverse('app1:save_task'), {'description': 'task1'})
+        response2 = self.client.post(reverse('app1:save_task'), {'description':'task2'})
+        response3 = self.client.post(reverse('app1:save_task'), {'description':'task3'})
+        response4 = self.client.post(reverse('app1:save_task'), {'description':'task4'})
+        
+    def test_check_priorities(self):
+        response = self.client.post(reverse('app1:delete_task', args=(2,)))
+        task1 = Task.objects.get(pk=1)
+        task3 = Task.objects.get(pk=3)
+        task4 = Task.objects.get(pk=4)
+        self.assertEquals(1, task1.priority)
+        self.assertEquals(2, task3.priority)
+        self.assertEquals(3, task4.priority)
+        
+        
+class IncreaseTaskPriority(TestCase):
+    
+    def setUp(self):
+        setup_test_environment()
+        # create an instance of the client for our use
+        self.client = Client()
+        response = self.client.post(reverse('app1:save_task'), {'description': 'task1'})
+        response2 = self.client.post(reverse('app1:save_task'), {'description':'task2'})
+        
+    def test_increase_priority(self):
+        response = self.client.post(reverse('app1:increase_task_priority', args=(2,)))
+        task1 = Task.objects.get(pk=1)
+        task2 = Task.objects.get(pk=2)
+        self.assertEquals(2, task1.priority)
+        self.assertEquals(1, task2.priority)
+        
+        
+class IncreaseTaskPriorityFail(TestCase):
+    
+    def setUp(self):
+        setup_test_environment()
+        # create an instance of the client for our use
+        self.client = Client()
+        response = self.client.post(reverse('app1:save_task'), {'description': 'task1'})
+        response2 = self.client.post(reverse('app1:save_task'), {'description':'task2'})
+        
+    def test_increase_priority(self):
+        response = self.client.post(reverse('app1:increase_task_priority', args=(1,)))
+        task1 = Task.objects.get(pk=1)
+        task2 = Task.objects.get(pk=2)
+        self.assertEquals(1, task1.priority)
+        self.assertEquals(2, task2.priority)
+        
+        
+class DecreaseTaskPriority(TestCase):
+    
+    def setUp(self):
+        setup_test_environment()
+        # create an instance of the client for our use
+        self.client = Client()
+        response = self.client.post(reverse('app1:save_task'), {'description': 'task1'})
+        response2 = self.client.post(reverse('app1:save_task'), {'description':'task2'})
+        
+    def test_decrease_priority(self):
+        response = self.client.post(reverse('app1:decrease_task_priority', args=(1,)))
+        task1 = Task.objects.get(pk=1)
+        task2 = Task.objects.get(pk=2)
+        self.assertEquals(2, task1.priority)
+        self.assertEquals(1, task2.priority)
+        
+        
+class DecreaseTaskPriorityFail(TestCase):
+    
+    def setUp(self):
+        setup_test_environment()
+        # create an instance of the client for our use
+        self.client = Client()
+        response = self.client.post(reverse('app1:save_task'), {'description': 'task1'})
+        response2 = self.client.post(reverse('app1:save_task'), {'description':'task2'})
+        
+    def test_decrease_priority(self):
+        response = self.client.post(reverse('app1:decrease_task_priority', args=(2,)))
+        task1 = Task.objects.get(pk=1)
+        task2 = Task.objects.get(pk=2)
+        self.assertEquals(1, task1.priority)
+        self.assertEquals(2, task2.priority)

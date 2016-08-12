@@ -12,4 +12,6 @@ urlpatterns = [
     url(r'^delete_task/(?P<task_id>[0-9]+)$', views.delete_task, name='delete_task'),
     url(r'^finish_task/(?P<task_id>[0-9]+)$', views.finish_task, name='finish_task'),
     url(r'^task_list/finished$', views.list_tasks_finished, name='task_list_finished'),
+    url(r'increase_task_priority/(?P<task_id>[0-9]+)$', views.increase_task_priority, name='increase_task_priority'),
+    url(r'decrease_task_priority/(?P<task_id>[0-9]+)$', views.decrease_task_priority, name='decrease_task_priority'),
 ]
