@@ -19,6 +19,8 @@ class TaskModelTest(TestCase):
         pass
 
     def test_task_model(self):
+        """ Se pueden guardar las tareas """
+        
         self.assertTrue(True)
         
         all_tasks_in_database = Task.objects.all()
@@ -45,19 +47,22 @@ class view_tests(TestCase):
         self.assertTrue('submit' in response.content)
         self.assertContains(response, 'submit')
         
+        
 class CreateTaskTest(TestCase):
 
     def setUp(self):
         self.factory = RequestFactory()
         self.c =  Client()
-        
-    def test_task_post(self):
         response = self.c.post(reverse('app1:save_task'), {'description': 'jugar lol'})
         response2 = self.c.post(reverse('app1:save_task'), {'description':'comer'})
+        
+    def test_task_post(self):
         self.assertEquals(2, len(Task.objects.all()))
         self.assertEquals('jugar lol', Task.objects.all()[0].description)
-        self.assertEquals(False, Task.objects.all()[1].is_finished)
         
+    def test_task_starts_unfinished(self):
+        self.assertEquals(False, Task.objects.all()[0].is_finished)
+                
 
 class list_tasks_view_tests(TestCase):
     
