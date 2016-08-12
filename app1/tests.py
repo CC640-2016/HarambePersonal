@@ -19,6 +19,8 @@ class TaskModelTest(TestCase):
         pass
 
     def test_task_model(self):
+        """ Se pueden guardar las tareas """
+        
         self.assertTrue(True)
         
         all_tasks_in_database = Task.objects.all()
@@ -45,19 +47,22 @@ class view_tests(TestCase):
         self.assertTrue('submit' in response.content)
         self.assertContains(response, 'submit')
         
+        
 class CreateTaskTest(TestCase):
 
     def setUp(self):
         self.factory = RequestFactory()
         self.c =  Client()
-        
-    def test_task_post(self):
         response = self.c.post(reverse('app1:save_task'), {'description': 'jugar lol'})
         response2 = self.c.post(reverse('app1:save_task'), {'description':'comer'})
+        
+    def test_task_post(self):
         self.assertEquals(2, len(Task.objects.all()))
         self.assertEquals('jugar lol', Task.objects.all()[0].description)
-        self.assertEquals(False, Task.objects.all()[1].is_finished)
         
+    def test_task_starts_unfinished(self):
+        self.assertEquals(False, Task.objects.all()[0].is_finished)
+                
 
 class list_tasks_view_tests(TestCase):
     
@@ -249,3 +254,37 @@ class DecreaseTaskPriorityFail(TestCase):
         task2 = Task.objects.get(pk=2)
         self.assertEquals(1, task1.priority)
         self.assertEquals(2, task2.priority)
+        
+class CleanTaskList(TestCase):
+    
+    def setUp(self):
+        setup_test_environment()
+        self.client = Client()
+        response = self.client.post(reverse('app1:save_task'), {'description': 'task1'})
+        response2 = self.client.post(reverse('app1:save_task'), {'description':'task2'})
+        
+    def test_clean_list(self):
+        response = self.client.post(reverse('app1:clean_task_list'))
+        all_tasks = Task.objects.all()
+        self.assertEquals(0, len(all_tasks))
+        
+class CleanTaskListView(TestCase):
+    
+    def setUp(self):
+        setup_test_environment()
+        self.client = Client()
+        response = self.client.post(reverse('app1:save_task'), {'description': 'task1'})
+        response2 = self.client.post(reverse('app1:save_task'), {'description':'task2'})
+    
+    def test_list_nonempty(self):
+        response = self.client.get(reverse('app1:task_list'))
+        response.status_code = 200
+        self.assertContains(response, 'task1')
+        self.assertContains(response, 'task2')
+        self.assertContains(response, 'Limpiar lista')
+    
+    def test_list_empty(self):
+        response = self.client.post(reverse('app1:clean_task_list'))
+        response.status_code = 200
+        self.assertNotContains(response, 'task1')
+        self.assertNotContains(response, 'task2')

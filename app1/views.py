@@ -105,3 +105,7 @@ def fix_next_tasks(priority):
     for task in tasks:
         task.priority = task.priority - 1
         task.save()
+        
+def clean_task_list(request):
+    Task.objects.all().delete()
+    return HttpResponseRedirect(reverse('app1:task_list'))
