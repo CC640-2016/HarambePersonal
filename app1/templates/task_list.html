@@ -10,6 +10,7 @@
 
 <table>
     <tr>
+        <th>#</th>
         <th>Descripcion</th>
         <th>Terminada?</th>
         <th></th>
@@ -17,26 +18,9 @@
         <th></th>
     </tr>
     {% for t in task_list %}
-        {% if filtering %}
-            {% if not t.is_finished %}
-                <tr>
-                    <td>{{ t.description }}</td>
-                    <td>
-                            Pendiente
-                    </td>
-                    <td>
-                        <a href="{% url 'app1:edit_task_view' t.id %}">Editar tarea</a>
-                    </td>
-                    <td>
-                        <a href="{% url 'app1:delete_task' t.id %}">Borrar</a>
-                    </td>
-                    <td>
-                        <a href="{% url 'app1:finish_task' t.id %}">Terminar</a>
-                    </td>
-                </tr>
-            {% endif %}    
-        {% else %}
+        {% if not filtering or not t.is_finished %}
             <tr>
+                <td>{{ t.priority }}</td>
                 <td>{{ t.description }}</td>
                 <td>
                     {% if t.is_finished %}
@@ -51,12 +35,21 @@
                 <td>
                     <a href="{% url 'app1:delete_task' t.id %}">Borrar</a>
                 </td>
-                
-                {% if not t.is_finished %}
-                    <td>
+                <td>
+                    {% if not t.is_finished %}
                         <a href="{% url 'app1:finish_task' t.id %}">Terminar</a>
-                    </td>
-                {% endif %}
+                    {% endif %}
+                </td>
+                <td>
+                    {% if not forloop.first %}
+                        <a href="{% url 'app1:increase_task_priority' t.id %}">Subir prioridad</a>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if not forloop.last %}
+                        <a href="{% url 'app1:decrease_task_priority' t.id %}">Bajar prioridad</a>
+                    {% endif %}
+                </td>
             </tr>
         {% endif %}
     {% endfor %}
